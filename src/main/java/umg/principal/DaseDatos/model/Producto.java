@@ -4,44 +4,18 @@ public class Producto {
     private int idProducto;
     private String descripcion;
     private String origen;
-    private int peso;
-    private int precio;
+    private double precio;
     private int existencia;
 
-    public int getPrecio() {
-        return precio;
-    }
-
-    public void setPrecio(int precio) {
-        this.precio = precio;
-    }
-
-    public int getExistencia() {
-        return existencia;
-    }
-
-    public void setExistencia(int existencia) {
-        this.existencia = existencia;
-    }
-
-    public int getPeso() {
-        return peso;
-    }
-
-    public void setPeso(int peso) {
-        this.peso = peso;
-    }
 
     // Constructor
-    public Producto(int idProducto, String descripcion, String origen,int precio,int existencia) {
+    public Producto(int idProducto, String descripcion, String origen,double precio,int existencia) {
         this.idProducto = idProducto;
         this.descripcion = descripcion;
         this.origen = origen;
         this.precio = precio;
         this.existencia = existencia;
     }
-
-
 
 
     public Producto() {
@@ -70,5 +44,21 @@ public class Producto {
 
     public void setOrigen(String origen) {
         this.origen = origen;
+    }
+
+    public double getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(double precio) {
+        this.precio = precio;
+    }
+
+    public int getExistencia() {
+        return existencia;
+    }
+
+    public void setExistencia(int existencia) {
+        this.existencia = existencia;
     }
 }
