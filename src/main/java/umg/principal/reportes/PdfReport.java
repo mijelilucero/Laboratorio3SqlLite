@@ -16,8 +16,18 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public class PdfReport {
-    private static final Font TITLE_FONT = new Font(Font.FontFamily.COURIER, 18, Font.BOLDITALIC);
-    private static final Font HEADER_FONT = new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD);
+    private static BaseColor naranja = new BaseColor(255, 82, 27);
+    private static BaseColor naranjaFuerte = new BaseColor(204, 48, 0);
+    private static BaseColor amarillo = new BaseColor(255, 195, 0);
+    private static BaseColor azul = new BaseColor(59, 148, 186);
+    private static BaseColor apricot = new BaseColor(249, 204, 180);
+    private static BaseColor mistyRose = new BaseColor(254, 233, 225);
+
+
+    private static final Font TITLE_FONT = new Font(Font.FontFamily.HELVETICA, 24, Font.BOLD, azul);
+    private static final Font HEADER_FONT = new Font(Font.FontFamily.HELVETICA, 14, Font.BOLD, BaseColor.WHITE);
+    private static final Font HEADERGROUP_FONT = new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD);
+    private static final Font NORMALBOLD_FONT = new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD);
     private static final Font NORMAL_FONT = new Font(Font.FontFamily.HELVETICA, 10, Font.NORMAL);
 
     public void generateProductReport(List<Producto> productos, String outputPath) throws DocumentException, IOException {
@@ -50,7 +60,7 @@ public class PdfReport {
     }
 
     private void addTitle(Document document) throws DocumentException {
-        Paragraph title = new Paragraph("Reporte de mi Primer PDF", TITLE_FONT);
+        Paragraph title = new Paragraph("REPORTE DE PRODUCTOS", TITLE_FONT);
         title.setAlignment(Element.ALIGN_CENTER);
         document.add(title);
         document.add(Chunk.NEWLINE);
@@ -59,6 +69,7 @@ public class PdfReport {
     private void addTextQR(Document document) throws DocumentException {
         Paragraph textQR = new Paragraph("Código QR que redirige al repositorio en GitHub:", NORMAL_FONT);
         textQR.setAlignment(Element.ALIGN_CENTER);
+        document.add(Chunk.NEWLINE);
         document.add(Chunk.NEWLINE);
         document.add(Chunk.NEWLINE);
         document.add(Chunk.NEWLINE);
@@ -79,13 +90,15 @@ public class PdfReport {
         // para cada título de columna, se crea una celda de encabezado en la tabla con ciertas propiedades (color de fondo, ancho del borde, y texto).
 
 
-
         Stream.of("ID", "Descripción", "Origen", "Precio", "Existencia", "Total")
                 .forEach(columnTitle -> {
                     PdfPCell header = new PdfPCell();
-                    header.setBackgroundColor(BaseColor.LIGHT_GRAY);
-                    header.setBorderWidth(2);
+                    header.setBackgroundColor(naranja);
+                    header.setBorderWidth(1);
+                    header.setBorderColor(naranjaFuerte);
                     header.setPhrase(new Phrase(columnTitle, HEADER_FONT));
+                    header.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    header.setVerticalAlignment(Element.ALIGN_MIDDLE);
                     table.addCell(header);
                 });
 
@@ -118,7 +131,7 @@ public class PdfReport {
 
             if (producto.getOrigen().equals("China")) {
                 PdfPCell cell = new PdfPCell(new Phrase(producto.getOrigen(), NORMAL_FONT));
-                cell.setBackgroundColor(BaseColor.GREEN);
+                cell.setBackgroundColor(amarillo);
                 table.addCell(cell);
             } else {
                 table.addCell(new Phrase(producto.getOrigen(), NORMAL_FONT));
@@ -141,7 +154,7 @@ public class PdfReport {
 
                 if (producto.getOrigen().equals("China")) {
                     PdfPCell cell = new PdfPCell(new Phrase(producto.getOrigen(), NORMAL_FONT));
-                    cell.setBackgroundColor(BaseColor.GREEN);
+                    cell.setBackgroundColor(amarillo);
                     table.addCell(cell);
                 } else {
                     table.addCell(new Phrase(producto.getOrigen(), NORMAL_FONT));
@@ -153,7 +166,7 @@ public class PdfReport {
                 agrupado = producto.getOrigen();
                 try{
                     //add blank line into the table
-                    table.addCell(new Phrase("Grupo:"+producto.getOrigen(), NORMAL_FONT));
+                    table.addCell(new Phrase("Grupo:"+producto.getOrigen(), HEADERGROUP_FONT));
                     table.addCell(new Phrase());
                     table.addCell(new Phrase());
                     table.addCell(new Phrase());
@@ -185,23 +198,38 @@ public class PdfReport {
                 currentOrigen = producto.getOrigen();
 
                 // Agregar fila de grupo
-                PdfPCell groupCell = new PdfPCell(new Phrase("Grupo: " + currentOrigen, NORMAL_FONT));
+                PdfPCell groupCell = new PdfPCell(new Phrase("Grupo: " + currentOrigen, HEADERGROUP_FONT));
                 groupCell.setColspan(6);
+                groupCell.setBackgroundColor(apricot);
                 table.addCell(groupCell);
             } else if (!producto.getOrigen().equals(currentOrigen)) {
                 // El grupo ha cambiado, imprimir totales del grupo anterior
-                PdfPCell totalCellLabel = new PdfPCell(new Phrase("Total Grupo " + currentOrigen, NORMAL_FONT));
+                PdfPCell totalCellLabel = new PdfPCell(new Phrase("Total Grupo " + currentOrigen, NORMALBOLD_FONT));
                 totalCellLabel.setColspan(3);
+                totalCellLabel.setBackgroundColor(mistyRose);
                 table.addCell(totalCellLabel);
 
-                table.addCell(new Phrase(String.format("Q. %.2f", groupTotalPrecio), NORMAL_FONT));
-                table.addCell(new Phrase(String.valueOf(groupTotalExistencia), NORMAL_FONT));
-                table.addCell(new Phrase(String.format("Q. %.2f", groupTotalTotal), NORMAL_FONT));
+                PdfPCell precioGeneralCell= new PdfPCell(new Phrase(String.format("Q. %.2f", groupTotalPrecio), NORMALBOLD_FONT));
+                precioGeneralCell.setBackgroundColor(mistyRose);
+                table.addCell(precioGeneralCell);
+
+                PdfPCell existenciaGeneralCell= new PdfPCell(new Phrase(String.valueOf(groupTotalExistencia), NORMALBOLD_FONT));
+                precioGeneralCell.setBackgroundColor(mistyRose);
+                table.addCell(precioGeneralCell);
+
+                PdfPCell totalGeneralCell= new PdfPCell(new Phrase(String.format("Q. %.2f", groupTotalTotal), NORMALBOLD_FONT));
+                precioGeneralCell.setBackgroundColor(mistyRose);
+                table.addCell(precioGeneralCell);
 
                 //Acumular totales generales
                 totalGeneralPrecio += groupTotalPrecio;
                 totalGeneralExistencia += groupTotalExistencia;
                 totalGeneralTotal += groupTotalTotal;
+
+                //Agregar división
+                PdfPCell afterTotalCellLabel = new PdfPCell(new Phrase(" ",NORMAL_FONT));
+                afterTotalCellLabel.setColspan(6);
+                table.addCell(afterTotalCellLabel);
 
                 // Reiniciar totales
                 groupTotalPrecio = 0.0;
@@ -212,8 +240,9 @@ public class PdfReport {
                 currentOrigen = producto.getOrigen();
 
                 // Agregar fila de nuevo grupo
-                PdfPCell groupCell = new PdfPCell(new Phrase("Grupo: " + currentOrigen, NORMAL_FONT));
+                PdfPCell groupCell = new PdfPCell(new Phrase("Grupo: " + currentOrigen, HEADERGROUP_FONT));
                 groupCell.setColspan(6);
+                groupCell.setBackgroundColor(apricot);
                 table.addCell(groupCell);
             }
 
@@ -223,11 +252,13 @@ public class PdfReport {
 
             if (producto.getOrigen().equals("China")) {
                 PdfPCell cell = new PdfPCell(new Phrase(producto.getOrigen(), NORMAL_FONT));
-                cell.setBackgroundColor(BaseColor.GREEN);
+                cell.setBackgroundColor(amarillo);
                 table.addCell(cell);
             } else {
                 table.addCell(new Phrase(producto.getOrigen(), NORMAL_FONT));
             }
+
+
             table.addCell(new Phrase(String.format("Q. %.2f", producto.getPrecio()), NORMAL_FONT));
             table.addCell(new Phrase(String.valueOf(producto.getExistencia()), NORMAL_FONT));
             table.addCell(new Phrase(String.format("Q. %.2f", (producto.getPrecio()*producto.getExistencia())), NORMAL_FONT));
@@ -240,26 +271,50 @@ public class PdfReport {
 
         // Imprimir totales para el último grupo
         if (currentOrigen != null) {
-            PdfPCell totalCellLabel = new PdfPCell(new Phrase("Total Grupo " + currentOrigen, NORMAL_FONT));
+            PdfPCell totalCellLabel = new PdfPCell(new Phrase("Total Grupo " + currentOrigen, NORMALBOLD_FONT));
             totalCellLabel.setColspan(3);
+            totalCellLabel.setBackgroundColor(mistyRose);
             table.addCell(totalCellLabel);
 
-            table.addCell(new Phrase(String.format("Q. %.2f", groupTotalPrecio), NORMAL_FONT));
-            table.addCell(new Phrase(String.valueOf(groupTotalExistencia), NORMAL_FONT));
-            table.addCell(new Phrase(String.format("Q. %.2f", groupTotalTotal), NORMAL_FONT));
+            PdfPCell precioGeneralCell= new PdfPCell(new Phrase(String.format("Q. %.2f", groupTotalPrecio), NORMALBOLD_FONT));
+            precioGeneralCell.setBackgroundColor(mistyRose);
+            table.addCell(precioGeneralCell);
+
+            PdfPCell existenciaGeneralCell= new PdfPCell(new Phrase(String.valueOf(groupTotalExistencia), NORMALBOLD_FONT));
+            precioGeneralCell.setBackgroundColor(mistyRose);
+            table.addCell(precioGeneralCell);
+
+            PdfPCell totalGeneralCell= new PdfPCell(new Phrase(String.format("Q. %.2f", groupTotalTotal), NORMALBOLD_FONT));
+            precioGeneralCell.setBackgroundColor(mistyRose);
+            table.addCell(precioGeneralCell);
+
 
             totalGeneralPrecio += groupTotalPrecio;
             totalGeneralExistencia += groupTotalExistencia;
             totalGeneralTotal += groupTotalTotal;
+
+            //Agregar división
+            PdfPCell afterTotalCellLabel = new PdfPCell(new Phrase(" ",NORMAL_FONT));
+            afterTotalCellLabel.setColspan(6);
+            table.addCell(afterTotalCellLabel);
         }
 
-        PdfPCell totalCellLabel = new PdfPCell(new Phrase("TOTALES GENERALES:", NORMAL_FONT));
+        PdfPCell totalCellLabel = new PdfPCell(new Phrase("TOTALES GENERALES:", HEADER_FONT));
         totalCellLabel.setColspan(3);
+        totalCellLabel.setBackgroundColor(naranja);
         table.addCell(totalCellLabel);
 
-        table.addCell(new Phrase(String.format("Q. %.2f", totalGeneralPrecio), NORMAL_FONT));
-        table.addCell(new Phrase(String.valueOf(totalGeneralExistencia), NORMAL_FONT));
-        table.addCell(new Phrase(String.format("Q. %.2f", totalGeneralTotal), NORMAL_FONT));
+        PdfPCell precioGeneralCell= new PdfPCell(new Phrase(String.format("Q. %.2f", totalGeneralPrecio), HEADER_FONT));
+        precioGeneralCell.setBackgroundColor(naranja);
+        table.addCell(precioGeneralCell);
+
+        PdfPCell existenciaGeneralCell= new PdfPCell(new Phrase(String.valueOf(totalGeneralExistencia), HEADER_FONT));
+        precioGeneralCell.setBackgroundColor(naranja);
+        table.addCell(precioGeneralCell);
+
+        PdfPCell totalGeneralCell= new PdfPCell(new Phrase(String.format("Q. %.2f", totalGeneralTotal), HEADER_FONT));
+        precioGeneralCell.setBackgroundColor(naranja);
+        table.addCell(precioGeneralCell);
     }
 
 }
