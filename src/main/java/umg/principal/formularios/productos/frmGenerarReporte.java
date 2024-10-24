@@ -10,6 +10,7 @@ public class frmGenerarReporte {
     private JComboBox comboBoxCondiciones;
     private JButton btnReporteCondicionado;
     private JButton btnReporteGeneral;
+    private JComboBox comboBoxPaises;
 
 
     public static void main(String[] args) {
@@ -18,7 +19,7 @@ public class frmGenerarReporte {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setResizable(false);
-        frame.setSize(550, 400);
+        frame.setSize(650, 400);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
@@ -30,6 +31,17 @@ public class frmGenerarReporte {
         comboBoxCondiciones.addItem("Origen de un país especifico");
         comboBoxCondiciones.addItem("Precios mayores a 2000");
         comboBoxCondiciones.addItem("Agrupado por país y ordenado por precio, de mayor a menor");
+
+        comboBoxPaises.addItem("Alemania");
+        comboBoxPaises.addItem("China");
+        comboBoxPaises.addItem("Corea del Sur");
+        comboBoxPaises.addItem("Estados Unidos");
+        comboBoxPaises.addItem("Francia");
+        comboBoxPaises.addItem("Japón");
+        comboBoxPaises.addItem("México");
+        comboBoxPaises.addItem("Países Bajos");
+        comboBoxPaises.addItem("Reino Unido");
+        comboBoxPaises.addItem("Suiza");
 
         btnReporteGeneral.addActionListener(new ActionListener() {
             @Override
