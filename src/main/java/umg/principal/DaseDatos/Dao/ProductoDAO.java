@@ -9,11 +9,13 @@ import java.util.List;
 
 public class ProductoDAO {
     public void insertar(Producto producto) throws SQLException {
-        String sql = "INSERT INTO tb_producto (descripcion, origen) VALUES (?, ?)";
+        String sql = "INSERT INTO tb_producto (descripcion, origen, precio, existencia) VALUES (?, ?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setString(1, producto.getDescripcion());
             pstmt.setString(2, producto.getOrigen());
+            pstmt.setDouble(3, producto.getPrecio());
+            pstmt.setInt(4, producto.getExistencia());
             pstmt.executeUpdate();
             try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
@@ -30,7 +32,7 @@ public class ProductoDAO {
             pstmt.setInt(1, id);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
-                    return new Producto(rs.getInt("id_producto"), rs.getString("descripcion"), rs.getString("origen"), rs.getInt("precio"), rs.getInt("existencia"));
+                    return new Producto(rs.getInt("id_producto"), rs.getString("descripcion"), rs.getString("origen"), rs.getDouble("precio"), rs.getInt("existencia"));
                 }
             }
         }
