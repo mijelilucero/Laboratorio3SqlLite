@@ -53,7 +53,7 @@ public class ProductoDAO {
     }
 
 
-    public List<Producto> obtenerTodosMenores30(String condicion) throws SQLException {
+    public List<Producto> obtenerTodosConCondicional(String condicion) throws SQLException {
         List<Producto> productos = new ArrayList<>();
         String sql = "SELECT * FROM tb_producto where "+condicion;
         try (Connection conn = DatabaseConnection.getConnection();
@@ -66,6 +66,20 @@ public class ProductoDAO {
         return productos;
     }
 
+    public List<Producto> obtenerTodosOrdenadosPorPrecio() throws SQLException {
+        List<Producto> productos = new ArrayList<>();
+        String sql = "SELECT * FROM tb_producto order by precio";
+        try (Connection conn = DatabaseConnection.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                productos.add(new Producto(rs.getInt("id_producto"), rs.getString("descripcion"), rs.getString("origen"), rs.getDouble("precio"), rs.getInt("existencia")));
+            }
+        }
+        return productos;
+    }
+
+
 
     public void actualizar(Producto producto) throws SQLException {
         String sql = "UPDATE tb_producto SET descripcion = ?, origen = ? WHERE id_producto = ?";
@@ -77,6 +91,7 @@ public class ProductoDAO {
             pstmt.executeUpdate();
         }
     }
+
 
     public void eliminar(int id) throws SQLException {
         String sql = "DELETE FROM tb_producto WHERE id_producto = ?";

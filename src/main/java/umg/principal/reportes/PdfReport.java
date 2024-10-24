@@ -209,17 +209,17 @@ public class PdfReport {
                 totalCellLabel.setBackgroundColor(mistyRose);
                 table.addCell(totalCellLabel);
 
-                PdfPCell precioGeneralCell= new PdfPCell(new Phrase(String.format("Q. %.2f", groupTotalPrecio), NORMALBOLD_FONT));
-                precioGeneralCell.setBackgroundColor(mistyRose);
-                table.addCell(precioGeneralCell);
+                PdfPCell preciogroupCell= new PdfPCell(new Phrase(String.format("Q. %.2f", groupTotalPrecio), NORMALBOLD_FONT));
+                preciogroupCell.setBackgroundColor(mistyRose);
+                table.addCell(preciogroupCell);
 
-                PdfPCell existenciaGeneralCell= new PdfPCell(new Phrase(String.valueOf(groupTotalExistencia), NORMALBOLD_FONT));
-                precioGeneralCell.setBackgroundColor(mistyRose);
-                table.addCell(precioGeneralCell);
+                PdfPCell existenciagroupCell= new PdfPCell(new Phrase(String.valueOf(groupTotalExistencia), NORMALBOLD_FONT));
+                existenciagroupCell.setBackgroundColor(mistyRose);
+                table.addCell(existenciagroupCell);
 
-                PdfPCell totalGeneralCell= new PdfPCell(new Phrase(String.format("Q. %.2f", groupTotalTotal), NORMALBOLD_FONT));
-                precioGeneralCell.setBackgroundColor(mistyRose);
-                table.addCell(precioGeneralCell);
+                PdfPCell totalgroupCell= new PdfPCell(new Phrase(String.format("Q. %.2f", groupTotalTotal), NORMALBOLD_FONT));
+                totalgroupCell.setBackgroundColor(mistyRose);
+                table.addCell(totalgroupCell);
 
                 //Acumular totales generales
                 totalGeneralPrecio += groupTotalPrecio;
@@ -276,17 +276,17 @@ public class PdfReport {
             totalCellLabel.setBackgroundColor(mistyRose);
             table.addCell(totalCellLabel);
 
-            PdfPCell precioGeneralCell= new PdfPCell(new Phrase(String.format("Q. %.2f", groupTotalPrecio), NORMALBOLD_FONT));
-            precioGeneralCell.setBackgroundColor(mistyRose);
-            table.addCell(precioGeneralCell);
+            PdfPCell preciogroupCell= new PdfPCell(new Phrase(String.format("Q. %.2f", groupTotalPrecio), NORMALBOLD_FONT));
+            preciogroupCell.setBackgroundColor(mistyRose);
+            table.addCell(preciogroupCell);
 
-            PdfPCell existenciaGeneralCell= new PdfPCell(new Phrase(String.valueOf(groupTotalExistencia), NORMALBOLD_FONT));
-            precioGeneralCell.setBackgroundColor(mistyRose);
-            table.addCell(precioGeneralCell);
+            PdfPCell existenciagroupCell= new PdfPCell(new Phrase(String.valueOf(groupTotalExistencia), NORMALBOLD_FONT));
+            existenciagroupCell.setBackgroundColor(mistyRose);
+            table.addCell(existenciagroupCell);
 
-            PdfPCell totalGeneralCell= new PdfPCell(new Phrase(String.format("Q. %.2f", groupTotalTotal), NORMALBOLD_FONT));
-            precioGeneralCell.setBackgroundColor(mistyRose);
-            table.addCell(precioGeneralCell);
+            PdfPCell totalgroupCell= new PdfPCell(new Phrase(String.format("Q. %.2f", groupTotalTotal), NORMALBOLD_FONT));
+            totalgroupCell.setBackgroundColor(mistyRose);
+            table.addCell(totalgroupCell);
 
 
             totalGeneralPrecio += groupTotalPrecio;
@@ -309,12 +309,12 @@ public class PdfReport {
         table.addCell(precioGeneralCell);
 
         PdfPCell existenciaGeneralCell= new PdfPCell(new Phrase(String.valueOf(totalGeneralExistencia), HEADER_FONT));
-        precioGeneralCell.setBackgroundColor(naranja);
-        table.addCell(precioGeneralCell);
+        existenciaGeneralCell.setBackgroundColor(naranja);
+        table.addCell(existenciaGeneralCell);
 
         PdfPCell totalGeneralCell= new PdfPCell(new Phrase(String.format("Q. %.2f", totalGeneralTotal), HEADER_FONT));
-        precioGeneralCell.setBackgroundColor(naranja);
-        table.addCell(precioGeneralCell);
+        totalGeneralCell.setBackgroundColor(naranja);
+        table.addCell(totalGeneralCell);
     }
 
 }

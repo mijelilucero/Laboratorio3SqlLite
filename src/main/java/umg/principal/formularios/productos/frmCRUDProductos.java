@@ -7,7 +7,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class frmCRUDProductos {
+public class frmCRUDProductos extends JFrame{
     private JPanel JfrmProductos;
     private JButton btnSalir;
     private JTextField txtIdProducto;
@@ -117,7 +117,8 @@ public class frmCRUDProductos {
         btnGenerarReporte.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                frmGenerarReporte formGeneradorDeReportes = new frmGenerarReporte();
+                formGeneradorDeReportes.mostrarFrmGenerarReporte();
             }
         });
     }
