@@ -28,7 +28,8 @@ public class PdfReport {
         try{
             addTitle(document);
             addProductTable(document, productos);
-            addQrCode(document, "https://www.google.com");
+            addTextQR(document);
+            addQrCode(document, "https://github.com/mijelilucero/Laboratorio3SqlLite");
             document.close();
         } catch (Exception e) {
             System.out.println("Error al generar el PDF: " + e.getMessage());
@@ -55,8 +56,17 @@ public class PdfReport {
         document.add(Chunk.NEWLINE);
     }
 
+    private void addTextQR(Document document) throws DocumentException {
+        Paragraph textQR = new Paragraph("Código QR que redirige al repositorio en GitHub:", NORMAL_FONT);
+        textQR.setAlignment(Element.ALIGN_CENTER);
+        document.add(Chunk.NEWLINE);
+        document.add(Chunk.NEWLINE);
+        document.add(Chunk.NEWLINE);
+        document.add(textQR);
+    }
+
     private void addProductTable(Document document, List<Producto> productos) throws DocumentException {
-        PdfPTable table = new PdfPTable(5); // 4 columnas para id, descripción, origen y precio
+        PdfPTable table = new PdfPTable(6); // 6 columnas para id, descripción, origen, precio, existencia y total
         table.setWidthPercentage(100);
         addTableHeader(table);
       //  addRows(table, productos);
@@ -70,7 +80,7 @@ public class PdfReport {
 
 
 
-        Stream.of("ID", "Descripción", "Origen", "Precio", "Existencia")
+        Stream.of("ID", "Descripción", "Origen", "Precio", "Existencia", "Total")
                 .forEach(columnTitle -> {
                     PdfPCell header = new PdfPCell();
                     header.setBackgroundColor(BaseColor.LIGHT_GRAY);
@@ -113,10 +123,9 @@ public class PdfReport {
             } else {
                 table.addCell(new Phrase(producto.getOrigen(), NORMAL_FONT));
             }
-            table.addCell(new Phrase(String.valueOf(producto.getPrecio()), NORMAL_FONT));
+            table.addCell(new Phrase(String.format("Q. %.2f", producto.getPrecio()), NORMAL_FONT));
             table.addCell(new Phrase(String.valueOf(producto.getExistencia()), NORMAL_FONT));
-
-            //table.addCell(new Phrase(String.format("Q%.2f", producto.getPrecio()), NORMAL_FONT));
+            table.addCell(new Phrase(String.valueOf((producto.getPrecio()*producto.getExistencia())), NORMAL_FONT));
         }
     }
 
@@ -137,9 +146,9 @@ public class PdfReport {
                 } else {
                     table.addCell(new Phrase(producto.getOrigen(), NORMAL_FONT));
                 }
-                table.addCell(new Phrase(String.valueOf(producto.getPrecio()), NORMAL_FONT));
+                table.addCell(new Phrase(String.format("Q. %.2f", producto.getPrecio()), NORMAL_FONT));
                 table.addCell(new Phrase(String.valueOf(producto.getExistencia()), NORMAL_FONT));
-
+                table.addCell(new Phrase(String.valueOf((producto.getPrecio()*producto.getExistencia())), NORMAL_FONT));
             } else {
                 agrupado = producto.getOrigen();
                 try{
@@ -149,23 +158,26 @@ public class PdfReport {
                     table.addCell(new Phrase());
                     table.addCell(new Phrase());
                     table.addCell(new Phrase());
+                    table.addCell(new Phrase());
                 }   catch (Exception e) {
                     System.out.println("Error al agrupar el PDF: " + e.getMessage());
                 }
-
-
-
             }
-            //table.addCell(new Phrase(String.format("Q%.2f", producto.getPrecio()), NORMAL_FONT));
         }
     }
 
 
 
     private void addRowsGroup(PdfPTable table, List<Producto> productos) {
+
         String currentOrigen = null;
         double groupTotalPrecio = 0.0;
         int groupTotalExistencia = 0;
+        double groupTotalTotal= 0.0;
+
+        double totalGeneralPrecio = 0.0;
+        int totalGeneralExistencia = 0;
+        double totalGeneralTotal= 0.0;
 
         for (Producto producto : productos) {
             if (currentOrigen == null) {
@@ -174,7 +186,7 @@ public class PdfReport {
 
                 // Agregar fila de grupo
                 PdfPCell groupCell = new PdfPCell(new Phrase("Grupo: " + currentOrigen, NORMAL_FONT));
-                groupCell.setColspan(5);
+                groupCell.setColspan(6);
                 table.addCell(groupCell);
             } else if (!producto.getOrigen().equals(currentOrigen)) {
                 // El grupo ha cambiado, imprimir totales del grupo anterior
@@ -182,19 +194,26 @@ public class PdfReport {
                 totalCellLabel.setColspan(3);
                 table.addCell(totalCellLabel);
 
-                table.addCell(new Phrase(String.valueOf(groupTotalPrecio), NORMAL_FONT));
+                table.addCell(new Phrase(String.format("Q. %.2f", groupTotalPrecio), NORMAL_FONT));
                 table.addCell(new Phrase(String.valueOf(groupTotalExistencia), NORMAL_FONT));
+                table.addCell(new Phrase(String.format("Q. %.2f", groupTotalTotal), NORMAL_FONT));
+
+                //Acumular totales generales
+                totalGeneralPrecio += groupTotalPrecio;
+                totalGeneralExistencia += groupTotalExistencia;
+                totalGeneralTotal += groupTotalTotal;
 
                 // Reiniciar totales
                 groupTotalPrecio = 0.0;
                 groupTotalExistencia = 0;
+                groupTotalTotal = 0.0;
 
                 // Actualizar el origen actual al nuevo grupo
                 currentOrigen = producto.getOrigen();
 
                 // Agregar fila de nuevo grupo
                 PdfPCell groupCell = new PdfPCell(new Phrase("Grupo: " + currentOrigen, NORMAL_FONT));
-                groupCell.setColspan(5);
+                groupCell.setColspan(6);
                 table.addCell(groupCell);
             }
 
@@ -209,12 +228,14 @@ public class PdfReport {
             } else {
                 table.addCell(new Phrase(producto.getOrigen(), NORMAL_FONT));
             }
-            table.addCell(new Phrase(String.valueOf(producto.getPrecio()), NORMAL_FONT));
+            table.addCell(new Phrase(String.format("Q. %.2f", producto.getPrecio()), NORMAL_FONT));
             table.addCell(new Phrase(String.valueOf(producto.getExistencia()), NORMAL_FONT));
+            table.addCell(new Phrase(String.format("Q. %.2f", (producto.getPrecio()*producto.getExistencia())), NORMAL_FONT));
 
             // Acumular totales
             groupTotalPrecio += producto.getPrecio();
             groupTotalExistencia += producto.getExistencia();
+            groupTotalTotal += producto.getPrecio()*producto.getExistencia();
         }
 
         // Imprimir totales para el último grupo
@@ -223,9 +244,22 @@ public class PdfReport {
             totalCellLabel.setColspan(3);
             table.addCell(totalCellLabel);
 
-            table.addCell(new Phrase(String.valueOf(groupTotalPrecio), NORMAL_FONT));
+            table.addCell(new Phrase(String.format("Q. %.2f", groupTotalPrecio), NORMAL_FONT));
             table.addCell(new Phrase(String.valueOf(groupTotalExistencia), NORMAL_FONT));
+            table.addCell(new Phrase(String.format("Q. %.2f", groupTotalTotal), NORMAL_FONT));
+
+            totalGeneralPrecio += groupTotalPrecio;
+            totalGeneralExistencia += groupTotalExistencia;
+            totalGeneralTotal += groupTotalTotal;
         }
+
+        PdfPCell totalCellLabel = new PdfPCell(new Phrase("TOTALES GENERALES:", NORMAL_FONT));
+        totalCellLabel.setColspan(3);
+        table.addCell(totalCellLabel);
+
+        table.addCell(new Phrase(String.format("Q. %.2f", totalGeneralPrecio), NORMAL_FONT));
+        table.addCell(new Phrase(String.valueOf(totalGeneralExistencia), NORMAL_FONT));
+        table.addCell(new Phrase(String.format("Q. %.2f", totalGeneralTotal), NORMAL_FONT));
     }
 
 }
